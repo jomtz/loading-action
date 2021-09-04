@@ -7,9 +7,9 @@
 
 
 
-    <color name="purple_300">#c463d5</color>
-    <color name="purple_400">#b73dcc</color>
+    <color name="deep_purple_300">#9575cd</color>
+    <color name="deep_purple_400">#7e57c2</color>
 
-    <color name="purple_500">#a907c2</color>
+    <color name="deep_purple_500">#673ab7</color>
 
 </resources>
