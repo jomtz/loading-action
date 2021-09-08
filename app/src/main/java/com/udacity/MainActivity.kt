@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
 
+    private lateinit var customButton: LoadingButton
+
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
@@ -30,7 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        custom_button.setOnClickListener {
+        customButton = findViewById(R.id.custom_button)
+        customButton.setCustomButtonState(ButtonState.Completed)
+        customButton.setOnClickListener {
             download()
         }
     }
