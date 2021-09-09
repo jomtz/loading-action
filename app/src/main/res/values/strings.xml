@@ -11,4 +11,16 @@
     <string name="button_name">Click me</string>
     <string name="button_loading">We are loading </string>
     <string name="title_activity_detail">DetailActivity</string>
+
+
+    <!-- List of Radio Buttons Text-->
+    <string name="glide_text">Glide - Image Loading Library by BumpTech</string>
+    <string name="load_app_text">LoadApp - Current repository by Udacity</string>
+    <string name="retrofit_text">Retrofit - Type-safe HTTP client for Android and Java by Square, Inc</string>
+
+    <!-- List of Radio Buttons URLs-->
+    <string name="glide_repo_url">https://github.com/bumptech/glide</string>
+    <string name="load_app_repo_url">https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter</string>
+    <string name="retrofit_repo_url">https://github.com/square/retrofit</string>
+
 </resources>

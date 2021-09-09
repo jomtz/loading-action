@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private var downloadID: Long = 0
 
     private lateinit var customButton: LoadingButton
+    private var selectedGitHubRepo: String? = null
+    private var selectedGitHubText: String? = null
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -71,5 +74,32 @@ class MainActivity : AppCompatActivity() {
         private const val CHANNEL_ID = "channelId"
     }
 
+
+    // When radio button are checked
+    fun onRadioButtonChecked(view: View) {
+        if (view is RadioButton) {
+            val isChecked = view.isChecked
+            when (view.getId()) {
+                R.id.glide_button ->
+                    if (isChecked) {
+                        selectedGitHubRepo = getString(R.string.glide_repo_url)
+                        selectedGitHubText = getString(R.string.glide_text)
+                    }
+
+                R.id.loadApp_button ->
+                    if (isChecked) {
+                        selectedGitHubRepo = getString(R.string.load_app_repo_url)
+                        selectedGitHubText = getString(R.string.load_app_text)
+                    }
+
+                R.id.retrofit_button -> {
+                    if (isChecked) {
+                        selectedGitHubRepo = getString(R.string.retrofit_repo_url)
+                        selectedGitHubText = getString(R.string.retrofit_text)
+                    }
+                }
+            }
+        }
+    }
 
 }
