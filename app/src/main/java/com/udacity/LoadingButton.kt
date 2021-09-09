@@ -1,7 +1,6 @@
 package com.udacity
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,12 +8,12 @@ import android.graphics.Color.WHITE
 import android.graphics.Paint
 import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.graphics.Rect
-import android.provider.Settings.Global.getString
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.content_main.view.*
 import kotlin.properties.Delegates
+
 
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -31,26 +30,34 @@ class LoadingButton @JvmOverloads constructor(
     private var valueAnimator = ValueAnimator()
 
 
-    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
+    private var buttonState: ButtonState by Delegates.observable(ButtonState.Completed) { _, _, new ->
         when (new) {
             ButtonState.Loading -> {
-                setButtonText("@string/button_loading")
+                setButtonText("We are loading")
                 setButtonColor("#004349")
                 valueAnimator= ValueAnimator.ofFloat(0f, 1f).apply {
                     addUpdateListener {
                         movingValue = animatedValue as Float
                         invalidate()
                     }
+                    duration = 3000
                     start()
                 }
                 stopLoadingButton()
             }
-            ButtonState.Clicked -> {}
+
+            ButtonState.Clicked -> {
+            }
+
             ButtonState.Completed -> {
-                setButtonText("Downloaded")
-                setButtonColor("#F9A825")
+                setButtonText("Download")
+                setButtonColor("#07C2AA")
+                valueAnimator.cancel()
+                initialMovingValue()
+                startLoadingButton()
             }
         }
+        invalidate()
     }
 
     init {
@@ -58,7 +65,6 @@ class LoadingButton @JvmOverloads constructor(
             attrs,
             R.styleable.LoadingButton,
             0, 0).apply {
-
             try {
                 buttonText = getString(R.styleable.LoadingButton_buttonText).toString()
                 buttonColor = ContextCompat.getColor(context, R.color.colorPrimary)
@@ -66,7 +72,6 @@ class LoadingButton @JvmOverloads constructor(
                 recycle()
             }
         }
-
     }
 
     /**
@@ -90,7 +95,7 @@ class LoadingButton @JvmOverloads constructor(
      *  moving state Loading Button
      */
     private val movingBackgroundPaint = Paint(ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.colorPrimary)
+        color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -110,15 +115,15 @@ class LoadingButton @JvmOverloads constructor(
 
         }
 
-        val centerX = measuredWidth.toFloat() / 2
-        val centerY = measuredHeight.toFloat() / 2 - textRect.centerY()
+        val centerX = this.measuredWidth.toFloat() / 2
+        val centerY = this.measuredHeight.toFloat() / 2 - textRect.centerY()
         canvas.drawText(buttonText,centerX, centerY, textPaint)
 
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val minw: Int = paddingLeft + paddingRight + suggestedMinimumWidth
-        val w: Int = resolveSizeAndState(minw, widthMeasureSpec, 1)
+        val minimumWidth: Int = paddingLeft + paddingRight + suggestedMinimumWidth
+        val w: Int = resolveSizeAndState(minimumWidth, widthMeasureSpec, 1)
         val h: Int = resolveSizeAndState(
             MeasureSpec.getSize(w),
             heightMeasureSpec,
@@ -131,8 +136,15 @@ class LoadingButton @JvmOverloads constructor(
     /**
      *  Properties to start and stop Loading Button
      */
+    private fun startLoadingButton() {
+        custom_button.isEnabled = true
+    }
     private fun stopLoadingButton() {
         custom_button.isEnabled = false
+    }
+
+    private fun initialMovingValue() {
+        movingValue = 0f
     }
 
     /**
@@ -159,9 +171,5 @@ class LoadingButton @JvmOverloads constructor(
         invalidate()
         requestLayout()
     }
-
-
-
-
 
 }
