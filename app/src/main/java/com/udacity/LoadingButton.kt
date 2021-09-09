@@ -46,9 +46,6 @@ class LoadingButton @JvmOverloads constructor(
                 stopLoadingButton()
             }
 
-            ButtonState.Clicked -> {
-            }
-
             ButtonState.Completed -> {
                 setButtonText("Download")
                 setButtonColor("#07C2AA")
@@ -56,6 +53,8 @@ class LoadingButton @JvmOverloads constructor(
                 initialMovingValue()
                 startLoadingButton()
             }
+
+            ButtonState.Clicked -> {}
         }
         invalidate()
     }
@@ -97,6 +96,13 @@ class LoadingButton @JvmOverloads constructor(
     private val movingBackgroundPaint = Paint(ANTI_ALIAS_FLAG).apply {
         color = ContextCompat.getColor(context, R.color.colorPrimaryDark)
     }
+    /**
+     *  movingArcPaint Handle "How to draw" the 360 degrees state Loading Button
+     */
+    private val movingArcPaint = Paint(ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.colorAccent)
+    }
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -107,17 +113,26 @@ class LoadingButton @JvmOverloads constructor(
 
         canvas.drawColor(buttonColor)
         textPaint.getTextBounds(buttonText, 0, buttonText.length, textRect)
-        canvas.drawRoundRect(0f, 0f, backgroundWidth, backgroundHeight, cornerRadius, cornerRadius, backgroundPaint)
+        canvas.drawRoundRect(0f, 0f, backgroundWidth, backgroundHeight, cornerRadius,
+            cornerRadius, backgroundPaint)
 
         if (buttonState == ButtonState.Loading) {
-            val progressVal = movingValue * measuredWidth.toFloat()
-            canvas.drawRoundRect(0f, 0f, progressVal, backgroundHeight, cornerRadius, cornerRadius, movingBackgroundPaint)
+            var movingVal = movingValue * backgroundWidth
 
+            canvas.drawRoundRect(0f, 0f, movingVal, backgroundHeight, cornerRadius,
+                cornerRadius, movingBackgroundPaint)
+
+            val arcDiameter = cornerRadius * 2
+            val arcRectSize = measuredHeight.toFloat() - paddingBottom.toFloat() - arcDiameter
+
+            movingVal = movingValue * 360f
+            canvas.drawArc( arcDiameter, arcDiameter, arcRectSize, arcRectSize,
+                0f, movingVal,true, movingArcPaint)
         }
 
         val centerX = this.measuredWidth.toFloat() / 2
         val centerY = this.measuredHeight.toFloat() / 2 - textRect.centerY()
-        canvas.drawText(buttonText,centerX, centerY, textPaint)
+        canvas.drawText(buttonText, centerX, centerY, textPaint)
 
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ND940C3-Project</string>
+    <string name="app_name">Loading Action</string>
     <string name="app_description">Download files from Internet</string>
     <string name="action_settings">Settings</string>
 
@@ -22,5 +22,8 @@
     <string name="glide_repo_url">https://github.com/bumptech/glide</string>
     <string name="load_app_repo_url">https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter</string>
     <string name="retrofit_repo_url">https://github.com/square/retrofit</string>
+
+
+    <string name="no_file_selected">Please select the file to download</string>
 
 </resources>

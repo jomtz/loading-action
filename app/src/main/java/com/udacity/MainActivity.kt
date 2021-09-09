@@ -14,10 +14,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,17 +57,37 @@ class MainActivity : AppCompatActivity() {
     private fun download() {
         customButton.setCustomButtonState(ButtonState.Loading)
 
-        val request =
-            DownloadManager.Request(Uri.parse(URL))
-                .setTitle(getString(R.string.app_name))
-                .setDescription(getString(R.string.app_description))
-                .setRequiresCharging(false)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
+        if (selectedGitHubRepo != null) {
+            customButton.setCustomButtonState(ButtonState.Loading)
 
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            // Toast to test when Repo is downloaded
+            showToast(getString(R.string.notification_description))
+
+            val file = File(getExternalFilesDir(null), "/repos")
+            if (!file.exists()) { file.mkdirs() }
+            val request =
+                DownloadManager.Request(Uri.parse(selectedGitHubRepo))
+                    .setTitle(getString(R.string.app_name))
+                    .setDescription(getString(R.string.app_description))
+                    .setRequiresCharging(false)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
+
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadID =
+                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+
+        } else{
+            customButton.setCustomButtonState(ButtonState.Completed)
+            // Toast when is not a file selected
+            showToast(getString(R.string.no_file_selected))
+        }
+
+    }
+
+    private fun showToast(string: String) {
+        val toast = Toast.makeText(this, string, Toast.LENGTH_SHORT)
+        toast.show()
     }
 
     companion object {
