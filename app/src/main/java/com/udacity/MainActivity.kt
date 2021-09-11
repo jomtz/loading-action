@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.udacity.util.cancelNotifications
 import com.udacity.util.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -63,6 +64,10 @@ class MainActivity : AppCompatActivity() {
             /** Get an instance of NotificationManager and call sendNotification */
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             notificationManager.sendNotification(applicationContext.getString(R.string.notification_button), applicationContext)
+
+            /** Cancels all notifications. */
+            // notificationManager.cancelNotifications()
+
             //call create channel
             createChannel(
                 getString(R.string.github_repo_channel_id),
