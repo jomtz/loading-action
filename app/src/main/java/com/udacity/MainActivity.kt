@@ -1,13 +1,16 @@
 package com.udacity
 
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
@@ -53,14 +56,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        customButton.setCustomButtonState(ButtonState.Loading) //replace with clicked!!
+        customButton.setCustomButtonState(ButtonState.Clicked)
 
         if (selectedGitHubRepo != null) {
             customButton.setCustomButtonState(ButtonState.Loading)
             /** Get an instance of NotificationManager and call sendNotification */
-            val notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             notificationManager.sendNotification(applicationContext.getString(R.string.notification_button), applicationContext)
-
+            //call create channel
+            createChannel(
+                getString(R.string.github_repo_channel_id),
+                getString(R.string.github_repo_channel_name)
+            )
 
             val file = File(getExternalFilesDir(null), "/repos")
             if (!file.exists()) { file.mkdirs() }
@@ -120,6 +127,22 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_LOW
+            )
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "Download is Complete"
+
+            notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 
