@@ -1,8 +1,5 @@
 package com.udacity
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.app.DownloadManager
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -17,8 +14,9 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.udacity.util.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
 
 
@@ -55,13 +53,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        customButton.setCustomButtonState(ButtonState.Loading)
+        customButton.setCustomButtonState(ButtonState.Loading) //replace with clicked!!
 
         if (selectedGitHubRepo != null) {
             customButton.setCustomButtonState(ButtonState.Loading)
+            /** Get an instance of NotificationManager and call sendNotification */
+            val notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            notificationManager.sendNotification(applicationContext.getString(R.string.notification_button), applicationContext)
 
-            // Toast to test when Repo is downloaded
-            showToast(getString(R.string.notification_description))
 
             val file = File(getExternalFilesDir(null), "/repos")
             if (!file.exists()) { file.mkdirs() }

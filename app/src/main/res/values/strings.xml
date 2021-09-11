@@ -25,5 +25,5 @@
 
 
     <string name="no_file_selected">Please select the file to download</string>
-
+    <string name="github_repo_channel_id" translatable="false">github_repo_channel</string>
 </resources>
