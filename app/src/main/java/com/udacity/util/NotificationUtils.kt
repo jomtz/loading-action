@@ -19,11 +19,15 @@ private const val NOTIFICATION_ID = 0
  * @param applicationContext, activity context.
  */
 @SuppressLint("UnspecifiedImmutableFlag")
-fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
+fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context, status: String) {
 
     // Create the content intent for the notification, which launches the activity
     val contentIntent = Intent(applicationContext, DetailActivity::class.java)
-
+    // Transfer content to DetailActivity
+    contentIntent.apply {
+        putExtra("fileName", messageBody)
+        putExtra("status", status)
+    }
 
     val contentPendingIntent = PendingIntent.getActivity(
         applicationContext,
@@ -39,15 +43,12 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setSmallIcon(R.drawable.ic_assistant_black_24dp)
         .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
-
         .setContentIntent(contentPendingIntent)
         //setAutoCancel true dismisses the notification after the intent
         .setAutoCancel(true)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+
 
     notify(NOTIFICATION_ID, builder.build())
 }
 
-/** Cancels all notifications. */
-fun NotificationManager.cancelNotifications() {
-    cancelAll()
-}

@@ -8,17 +8,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.udacity.util.cancelNotifications
 import com.udacity.util.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -51,8 +52,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+        override fun onReceive(context: Context?, intent: Intent) {
+
+            //Fetching the download id received with the broadcast
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            //Checking if the received broadcast is for our enqueued download by matching download id
+            if (downloadID == id) {
+                val action = intent.action
+                if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    val query = DownloadManager.Query()
+                    query.setFilterById(intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0));
+                    val manager = context!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    val total: Cursor = manager.query(query)
+                    if (total.moveToFirst()) {
+                        if (total.count > 0) {
+                            val status = total.getInt(total.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                            /** Call sendNotification */
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                customButton.setCustomButtonState(ButtonState.Completed)
+                                notificationManager.sendNotification(selectedGitHubText.toString(), applicationContext, "Success")
+                            } else {
+                                customButton.setCustomButtonState(ButtonState.Completed)
+                                notificationManager.sendNotification(selectedGitHubRepo.toString(), applicationContext, "Failed")
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -61,14 +89,9 @@ class MainActivity : AppCompatActivity() {
 
         if (selectedGitHubRepo != null) {
             customButton.setCustomButtonState(ButtonState.Loading)
-            /** Get an instance of NotificationManager and call sendNotification */
+            /** Get an instance of NotificationManager*/
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-            notificationManager.sendNotification(applicationContext.getString(R.string.notification_button), applicationContext)
-
-            /** Cancels all notifications. */
-            // notificationManager.cancelNotifications()
-
-            //call create channel
+            /** Call to create channel */
             createChannel(
                 getString(R.string.github_repo_channel_id),
                 getString(R.string.github_repo_channel_name)
@@ -78,11 +101,18 @@ class MainActivity : AppCompatActivity() {
             if (!file.exists()) { file.mkdirs() }
             val request =
                 DownloadManager.Request(Uri.parse(selectedGitHubRepo))
+                    // Title of the Download Notification
                     .setTitle(getString(R.string.app_name))
+                    // Description of the Download Notification
                     .setDescription(getString(R.string.app_description))
+                    // Set if charging is required to begin the download
                     .setRequiresCharging(false)
+                    // Set if download is allowed on Mobile network
                     .setAllowedOverMetered(true)
+                    // Set if download is allowed on roaming network
                     .setAllowedOverRoaming(true)
+                    // Uri of the destination files directory
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/repos/repository.zip")
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
@@ -140,7 +170,7 @@ class MainActivity : AppCompatActivity() {
             val notificationChannel = NotificationChannel(
                 channelId,
                 channelName,
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_HIGH
             )
                 //disable badges for this channel
                 .apply {setShowBadge(false)}
