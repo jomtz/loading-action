@@ -28,7 +28,7 @@
     <string name="github_repo_channel_id" translatable="false">github_repo_channel</string>
     <string name="github_repo_channel_name" translatable="true">Repo</string>
     <string name="file_name_text">Glide - Image Loading Library by BumpTech</string>
-    <string name="file_name_title">File Name</string>
+    <string name="file_name_title">File Name:</string>
     <string name="status">Status:</string>
     <string name="success">Success</string>
     <string name="ok">OK</string>
