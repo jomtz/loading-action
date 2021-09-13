@@ -142,6 +142,9 @@ class MainActivity : AppCompatActivity() {
                 channelName,
                 NotificationManager.IMPORTANCE_LOW
             )
+                //disable badges for this channel
+                .apply {setShowBadge(false)}
+
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)
