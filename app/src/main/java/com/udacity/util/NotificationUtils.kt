@@ -36,6 +36,8 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
+    val actionIntent = NotificationCompat.Action.Builder(0,"Show More...",contentPendingIntent).build()
+
     val builder = NotificationCompat.Builder(
         applicationContext,
         applicationContext.getString(R.string.github_repo_channel_id)
@@ -47,7 +49,7 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         //setAutoCancel true dismisses the notification after the intent
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
-
+        .addAction(actionIntent)
 
     notify(NOTIFICATION_ID, builder.build())
 }
